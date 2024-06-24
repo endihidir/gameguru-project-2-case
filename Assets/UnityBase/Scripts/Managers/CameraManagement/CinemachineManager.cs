@@ -1,6 +1,4 @@
-using System;
 using Cinemachine;
-using UnityBase.Controller;
 using UnityBase.GameDataHolder;
 using UnityBase.Service;
 using UnityEngine;
@@ -9,17 +7,13 @@ namespace UnityBase.Manager
 {
     public class CinemachineManager : ICinemachineManager, IGameplayBootService
     {
-        public static Action<GameState> OnChangeCamera;
-
-        public static event Action<float, bool> OnCamSwipe;
-
-        private CameraSwipeController _cameraSwipeController;
-
         private CinemachineStateDrivenCamera _stateDrivenCameras;
 
         private CinemachineBrain _cinemachineBrain;
 
         private Animator _animator;
+
+        private Transform _camTargetsDefaultParent, _gameplayCamTarget, _tutorialCamTarget;
 
         private CameraState _currentCameraState;
 
@@ -30,33 +24,24 @@ namespace UnityBase.Manager
             _cinemachineBrain = cinemachineData.cinemachineBrain;
             _cinemachineBrain.m_UpdateMethod = cinemachineData.cinemachineUpdateMethod;
             _animator = _stateDrivenCameras.GetComponent<Animator>();
-
-            var gameplayVirtualCamera = GetVirtualCam(CameraState.GameplayState);
-            _cameraSwipeController = new CameraSwipeController(gameplayVirtualCamera, _stateDrivenCameras.m_CustomBlends.m_CustomBlends[1].m_Blend.BlendTime);
+            
+            _camTargetsDefaultParent = cinemachineData.camTargetsDefaultParent.transform;
+            _gameplayCamTarget = cinemachineData.gameplayCamTarget.transform;
+            _tutorialCamTarget = cinemachineData.tutorialCamTarget.transform;
         }
 
         ~CinemachineManager() => Dispose();
 
-        private void ChangeCamera(GameState gameState)
+        public void Initialize() { }
+        public void Dispose() { }
+
+        public void ChangeCamera(GameState gameState)
         {
             _currentCameraState = ConvertGameStateToCameraState(gameState);
 
             var stateName = _currentCameraState.ToString();
-
-            if (_animator)
-                _animator.Play(stateName);
-        }
-
-        public void Initialize()
-        {
             
-        }
-
-        public void Dispose()
-        {
-            OnChangeCamera -= ChangeCamera;
-            
-            _cameraSwipeController.Dispose();
+            _animator?.Play(stateName);
         }
 
         private CameraState ConvertGameStateToCameraState(GameState to) => to switch
@@ -76,36 +61,17 @@ namespace UnityBase.Manager
             return _stateDrivenCameras.ChildCameras[index] as CinemachineVirtualCamera;
         }
 
-        public void SetCamFollowTarget(CameraState cameraState, Transform target)
+        public void SetGameplayTargetParent(Transform parent)
         {
-            var index = (int)cameraState;
-            _stateDrivenCameras.ChildCameras[index].Follow = target;
+            _gameplayCamTarget.SetParent(parent);
+            _gameplayCamTarget.localPosition = Vector3.zero;
         }
-
-        public void SetCamLookTarget(CameraState cameraState, Transform target)
+        public void SetGameplayTargetPosition(Vector3 position) => _gameplayCamTarget.position = position;
+        public void SetGameplayTargetLocalPosition(Vector3 position) => _gameplayCamTarget.localPosition = position;
+        public void ResetGameplayTarget()
         {
-            var index = (int)cameraState;
-            _stateDrivenCameras.ChildCameras[index].LookAt = target;
-        }
-
-        public void SetCamFollowTargets(Transform target)
-        {
-            var length = _stateDrivenCameras.ChildCameras.Length;
-
-            for (int i = 0; i < length; i++)
-            {
-                _stateDrivenCameras.ChildCameras[i].Follow = target;
-            }
-        }
-
-        public void SetCamLookTargets(Transform target)
-        {
-            var length = _stateDrivenCameras.ChildCameras.Length;
-
-            for (int i = 0; i < length; i++)
-            {
-                _stateDrivenCameras.ChildCameras[i].LookAt = target;
-            }
+            _gameplayCamTarget.SetParent(_camTargetsDefaultParent);
+            _gameplayCamTarget.localPosition = Vector3.zero;
         }
     }
 

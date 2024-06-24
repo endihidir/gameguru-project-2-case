@@ -13,6 +13,7 @@ namespace UnityBase.Manager
     {
         private readonly ISceneManager _sceneManager;
         private readonly ITutorialProcessManager _tutorialProcessManager;
+        private readonly ICinemachineManager _cinemachineManager;
         
         private GameState _currentGameState = GameState.GameLoadingState;
         public GameState CurrentGameState => _currentGameState;
@@ -21,25 +22,16 @@ namespace UnityBase.Manager
 
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
-        public GameplayManager(ISceneManager sceneManager, ITutorialProcessManager tutorialProcessManager)
+        public GameplayManager(ISceneManager sceneManager, ITutorialProcessManager tutorialProcessManager, ICinemachineManager cinemachineManager)
         {
             _sceneManager = sceneManager;
             _tutorialProcessManager = tutorialProcessManager;
+            _cinemachineManager = cinemachineManager;
         }
-
-        ~GameplayManager() => Dispose();
 
         public void Initialize()
         {
             _sceneManager.OnSceneLoaded += OnSceneLoaded;
-        }
-
-        private void OnSceneLoaded(SceneType sceneType)
-        {
-            if (sceneType == SceneType.Gameplay)
-            {
-                InitializeGameState();
-            }
         }
 
         public void Dispose()
@@ -47,10 +39,14 @@ namespace UnityBase.Manager
             _sceneManager.OnSceneLoaded -= OnSceneLoaded;
             
             DisposeToken();
-            
-            _currentGameState = GameState.GameLoadingState;
-            
-            CinemachineManager.OnChangeCamera?.Invoke(_currentGameState);
+        }
+        
+        private void OnSceneLoaded(SceneType sceneType)
+        {
+            if (sceneType == SceneType.Gameplay)
+            {
+                InitializeGameState();
+            }
         }
 
         private void InitializeGameState()
@@ -103,7 +99,7 @@ namespace UnityBase.Manager
             
             await UniTask.WaitForSeconds(startDelay,false, PlayerLoopTiming.Update, _cancellationTokenSource.Token);
             
-            CinemachineManager.OnChangeCamera?.Invoke(gameStateData.EndState);
+            _cinemachineManager.ChangeCamera(gameStateData.EndState);
             InvokeStateData(gameStateData, TransitionState.Start);
             
             await UniTask.WaitForSeconds(halfDuration, false, PlayerLoopTiming.Update, _cancellationTokenSource.Token);

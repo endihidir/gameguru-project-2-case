@@ -10,10 +10,13 @@ namespace UnityBase.BaseLifetimeScope
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterEntryPoint<GameplayBootstarpper>();
+            
             builder.Register<GameplayManager>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<CinemachineManager>(Lifetime.Singleton).AsImplementedInterfaces();
-
-            //builder.RegisterComponentInHierarchy<CurrencyUI>().AsImplementedInterfaces();
+            
+            builder.Register<PlayerStateMachine>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<PlayerInitializer>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.RegisterComponentInHierarchy<PlayerController>().AsImplementedInterfaces();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Cinemachine;
+using UnityBase.Manager;
 using UnityEngine;
 using CameraState = UnityBase.Manager.CameraState;
 
@@ -6,10 +7,11 @@ namespace UnityBase.Service
 {
     public interface ICinemachineManager
     {
+        public void ChangeCamera(GameState gameState);
         public CinemachineVirtualCamera GetVirtualCam(CameraState cameraState);
-        public void SetCamFollowTarget(CameraState cameraState, Transform target);
-        public void SetCamLookTarget(CameraState cameraState, Transform target);
-        public void SetCamFollowTargets(Transform target);
-        public void SetCamLookTargets(Transform target);
+        public void SetGameplayTargetParent(Transform parent);
+        public void SetGameplayTargetPosition(Vector3 position);
+        public void SetGameplayTargetLocalPosition(Vector3 position);
+        public void ResetGameplayTarget();
     }
 }
