@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e921056e0ac43d49719046ee16c4b3d, type: 3}
+  m_Name: Stack Config 1
+  m_EditorClassIdentifier: 
+  movementDuration: 1
+  stackCount: 5
+  stacks:
+  - {fileID: 11400000, guid: 3eddf7d06473e254c9d88be56d31540b, type: 2}
+  - {fileID: 11400000, guid: 8a97666957d07674b86e96279156f4ea, type: 2}
+  - {fileID: 11400000, guid: 336d27ddcd359a149b184f65892e62fd, type: 2}
+  - {fileID: 11400000, guid: 59339b96a9e4abb4e89c9a9a671df1af, type: 2}
+  - {fileID: 11400000, guid: 85bc17b6a73d0f442b72746d7e52b401, type: 2}

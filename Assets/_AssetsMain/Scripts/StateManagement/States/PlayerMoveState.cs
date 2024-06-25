@@ -27,18 +27,18 @@ public class PlayerMoveState : IState
     
     public void OnEnter()
     {
-        _playerMovementController.SetMovementSpeed(1f);
+        _playerMovementController.SetMovementSpeed(0f);
     }
 
     public void OnUpdate(float deltaTime)
     {
         _playerMovementController.MoveForward();
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        /*if (Input.GetKeyDown(KeyCode.Space))
         {
             var xPos = Random.Range(-3f, 3f);
             _playerMovementController.MoveSideways(xPos, 0.1f);
-        }
+        }*/
     }
 
     public void OnExit()

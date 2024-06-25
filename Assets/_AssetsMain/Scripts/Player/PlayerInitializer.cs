@@ -4,7 +4,6 @@ using UnityEngine;
 public class PlayerInitializer : IPlayerInitializer, IGameplayBootService
 {
     private readonly IPlayerConstructor _playerConstructor;
-    
     public PlayerInitializer(IPlayerConstructor playerConstructor) => _playerConstructor = playerConstructor;
 
     public void Initialize() { }
@@ -12,10 +11,12 @@ public class PlayerInitializer : IPlayerInitializer, IGameplayBootService
 
     public IPlayerBehaviour InitializePlayer()
     {
-        IPlayerBehaviour playerBehaviour = new PlayerBehaviour(Vector3.zero);
+        IPlayerBehaviour playerBehaviour = new PlayerBehaviour();
         
         _playerConstructor.Construct(playerBehaviour);
 
+        playerBehaviour.Initialize(Vector3.zero);
+        
         return playerBehaviour;
     }
 }

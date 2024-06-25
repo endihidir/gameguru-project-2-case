@@ -1,22 +1,39 @@
 using System;
-using UnityBase.Extensions;
 using UnityBase.Pool;
 using UnityEngine;
 
-public class StackController : MonoBehaviour, IPoolable
+public class StackController : MonoBehaviour, IStackConstructor, IStackInitEntity, IStackSliceEntity, IStackAnimationEntity
 {
-    [SerializeField] private Transform _meshT;
-    [SerializeField] private MeshFilter _meshFilter;
-    [SerializeField] private MeshRenderer _meshRenderer;
-    public float Width => _meshT.localScale.x;
+    [SerializeField] private Transform _stackMeshT;
+    [SerializeField] private Transform _stackPiece;
+
+    [SerializeField] private MeshRenderer _stackMeshRenderer, _pieceMeshRenderer;
+
+    [SerializeField] private Rigidbody _stackRb, _pieceRb;
+
+    private IStackBehaviour _stackBehaviour;
     public Component PoolableObject => this;
     public bool IsActive => isActiveAndEnabled;
     public bool IsUnique => false;
-    
-    public void Initialize(Vector3 defaultScale)
+
+    public IStackBehaviour StackBehaviour => _stackBehaviour;
+    public Transform StackTransform => transform;
+    public Transform StackMeshTransform => _stackMeshT;
+    public Transform PieceTransform => _stackPiece;
+    public Rigidbody StackRigidBody => _stackRb;
+    public Rigidbody PieceRigidBody => _pieceRb;
+    public MeshRenderer StackMeshRenderer => _stackMeshRenderer;
+    public MeshRenderer StackPieceMeshRenderer => _pieceMeshRenderer;
+
+    public void Construct(IStackBehaviour stackBehaviour)
     {
-        _meshT.localScale = defaultScale;
+        _stackBehaviour = stackBehaviour;
+        _stackBehaviour.StackInitializer = new StackInitializer(this);
+        _stackBehaviour.StackSliceController = new StackSliceController(this);
+        _stackBehaviour.StackAnimationController = new StackAnimationController(this);
+        _stackBehaviour.IsConstructed = true;
     }
+
     public void Show(float duration, float delay, Action onComplete)
     {
         gameObject.SetActive(true);
@@ -28,38 +45,15 @@ public class StackController : MonoBehaviour, IPoolable
         gameObject.SetActive(false);
         onComplete?.Invoke();
     }
-    
-    public CutCase CutObject(StackController previousStack, float fitThreshold = 0.2f)
+
+    private void OnDestroy()
     {
-        var xDist = previousStack.transform.position.x - transform.position.x;
-        
-        if (Mathf.Abs(xDist) >= previousStack.Width) return CutCase.OutOfBounds;
-
-        if (Mathf.Abs(xDist) <= fitThreshold)
-        {
-            transform.position = transform.position.With(x: previousStack.transform.position.x);
-            return CutCase.PerfectFit;
-        }
-
-        var side = xDist > 0 ? 1f : -1f;
-        var cutSize = Mathf.Abs(xDist);
-        var remainingSize = previousStack.Width - cutSize;
-        
-        transform.position = transform.position.With(x: transform.position.x + side * (cutSize * 0.5f));
-        _meshT.localScale = _meshT.localScale.With(x: remainingSize);
-        
-        /*GameObject cutPiece = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        cutPiece.transform.localScale = _meshT.localScale.With(x: cutSize);
-        cutPiece.transform.position = transform.position.With(x: transform.position.x - side * (remainingSize + cutSize) * 0.5f, y: _meshT.position.y);*/
-        
-        return CutCase.Cut;
+        _stackBehaviour?.Dispose();
+        _stackBehaviour = null;
     }
 }
 
-
-public enum CutCase
+public interface IStackConstructor : IPoolable
 {
-    OutOfBounds,
-    PerfectFit,
-    Cut
+    public void Construct(IStackBehaviour stackBehaviour);
 }

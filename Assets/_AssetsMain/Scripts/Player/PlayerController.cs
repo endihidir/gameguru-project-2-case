@@ -16,7 +16,6 @@ public class PlayerController : MonoBehaviour, IPlayerConstructor, IAnimationEnt
         playerBehaviour.PlayerAnimationController = playerAnimationController;
 
         IPlayerMovementController playerMovementController = new PlayerMovementController(this);
-        playerMovementController.SetInitialPosition(playerBehaviour.InitialPosition);
         playerBehaviour.PlayerMovementController = playerMovementController;
     }
 

@@ -6,5 +6,7 @@ namespace UnityBase.Managers.SO
     public class LevelSO : ScriptableObject
     {
         public int index;
+
+        public StackConfigSO stackConfigSo;
     }
 }
