@@ -45,12 +45,8 @@ public class StackController : MonoBehaviour, IStackConstructor, IStackInitEntit
         gameObject.SetActive(false);
         onComplete?.Invoke();
     }
-
-    private void OnDestroy()
-    {
-        _stackBehaviour?.Dispose();
-        _stackBehaviour = null;
-    }
+    
+    private void OnDestroy() => _stackBehaviour?.Dispose();
 }
 
 public interface IStackConstructor : IPoolable

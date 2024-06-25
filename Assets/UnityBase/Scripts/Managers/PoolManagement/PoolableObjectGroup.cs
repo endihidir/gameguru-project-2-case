@@ -68,8 +68,8 @@ namespace UnityBase.Pool
 
         public void HideObject<T>(T poolable, float duration, float delay, Action onComplete) where T : IPoolable
         {
-            if (!poolable.IsActive) return;
-
+            if(poolable is null) return;
+            
             poolable.Hide(duration, delay, ()=> OnHideComplete(poolable, onComplete));
         }
 

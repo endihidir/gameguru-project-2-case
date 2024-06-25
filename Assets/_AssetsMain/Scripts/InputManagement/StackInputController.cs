@@ -1,3 +1,4 @@
+using System;
 using UnityBase.EventBus;
 using UnityBase.Manager;
 using UnityBase.Manager.Data;
@@ -5,23 +6,20 @@ using UnityBase.Service;
 using UnityEngine;
 using VContainer.Unity;
 
-public class StackInputController : IStackInputController, IGameplayBootService, ITickable
+public class StackDropController : IStackDropController, IGameplayBootService, ITickable
 {
     private readonly IStackContainer _stackContainer;
-    private readonly IGameplayManager _gameplayManager;
     
     private readonly EventBinding<GameStateData> _gameStateEventBinding;
 
     private bool _isInputActivated;
 
     private IStackBehaviour _currentStackBehaviour;
+    public event Action<Vector3> OnStackDropped;
     
-    public StackInputController(IStackContainer stackContainer, IGameplayManager gameplayManager)
+    public StackDropController(IStackContainer stackContainer)
     {
         _stackContainer = stackContainer;
-
-        _gameplayManager = gameplayManager;
-        
         _gameStateEventBinding = new EventBinding<GameStateData>();
     }
 
@@ -29,9 +27,6 @@ public class StackInputController : IStackInputController, IGameplayBootService,
     {
         _gameStateEventBinding.Add(OnStartGameState);
         EventBus<GameStateData>.AddListener(_gameStateEventBinding, GameStateData.GetChannel(TransitionState.Start));
-        
-        _stackContainer.TryGetNextStack(out _currentStackBehaviour);
-        _currentStackBehaviour.StackAnimationController.StartMovement(StartSide.Left);
     }
     
     public void Dispose()
@@ -43,33 +38,60 @@ public class StackInputController : IStackInputController, IGameplayBootService,
     private void OnStartGameState(GameStateData gameStateData)
     {
         _isInputActivated = gameStateData is { StartState: GameState.GameLoadingState, EndState: GameState.GamePlayState };
+
+        if (_isInputActivated)
+        {
+            _stackContainer.TryGetNextStack(out _currentStackBehaviour);
+            _currentStackBehaviour.StackAnimationController.StartMovement();
+        }
     }
 
     public void Tick()
     {
-        if(!_isInputActivated) return;
-
         if (Input.GetMouseButtonDown(0))
         {
-            _currentStackBehaviour?.StackAnimationController?.StopMovement();
-            var sliceCase = _currentStackBehaviour?.StackSliceController?.SliceObject();
-            Debug.Log(sliceCase);
+            SliceActiveStack();
             
-            if (_stackContainer.TryGetNextStack(out _currentStackBehaviour))
-            {
-                _currentStackBehaviour.StackAnimationController.StartMovement(StartSide.Left);
-            }
-            else
-            {
-                Debug.Log("Game Finished");
-                //_gameplayManager.ChangeGameState(GameState.GameSuccessState, 1f);
-            }
-            
+            UpdateActiveStack();
+        }
+    }
+
+    private void SliceActiveStack()
+    {
+        if(!_isInputActivated) return;
+
+        _currentStackBehaviour?.StackAnimationController.StopMovement();
+        
+        var sliceCase = _currentStackBehaviour?.StackSliceController.SliceObject();
+
+        switch (sliceCase)
+        {
+            case CutCase.OutOfBounds:
+                _isInputActivated = false;
+               break;
+            case CutCase.Cut or CutCase.PerfectFit:
+                var droppedStackPosition = _currentStackBehaviour.StackInitializer.GetPos();
+                OnStackDropped?.Invoke(droppedStackPosition);
+                break;
+        }
+    }
+
+    private void UpdateActiveStack()
+    {
+        if(!_isInputActivated) return;
+        
+        if (_stackContainer.TryGetNextStack(out _currentStackBehaviour))
+        {
+            _currentStackBehaviour.StackAnimationController.StartMovement();
+        }
+        else
+        {
+            _isInputActivated = false;
         }
     }
 }
 
-public interface IStackInputController
+public interface IStackDropController
 {
-    
+    public event Action<Vector3> OnStackDropped;
 }

@@ -14,6 +14,7 @@ public class StackSliceController : IStackSliceController
     private Transform MeshTransform => _stackSliceEntity.StackMeshTransform;
     private Transform PieceTransform => _stackSliceEntity.PieceTransform;
 
+    private Rigidbody StackRb => _stackSliceEntity.StackRigidBody;
     private Rigidbody PieceRb => _stackSliceEntity.PieceRigidBody;
 
     public IStackSliceEntity StackSliceEntity => _stackSliceEntity;
@@ -21,6 +22,8 @@ public class StackSliceController : IStackSliceController
     public StackSliceController(IStackSliceEntity stackSliceEntity)
     {
         _stackSliceEntity = stackSliceEntity;
+        
+        ResetPiece();
     }
 
     public void SetPreviousSliceEntity(IStackSliceEntity previousStackSliceEntity)
@@ -33,8 +36,13 @@ public class StackSliceController : IStackSliceController
         if (_previousStackSliceEntity is null) return CutCase.None;
         
         var xDist = _previousStackSliceEntity.StackTransform.position.x - StackTransform.position.x;
-        
-        if (Mathf.Abs(xDist) >= _previousStackSliceEntity.StackMeshTransform.localScale.x) return CutCase.OutOfBounds;
+
+        if (Mathf.Abs(xDist) >= _previousStackSliceEntity.StackMeshTransform.localScale.x)
+        {
+            StackRb.isKinematic = false;
+            _resetTween = DOVirtual.DelayedCall(3f, ResetStack);
+            return CutCase.OutOfBounds;
+        }
 
         if (Mathf.Abs(xDist) <= _previousStackSliceEntity.StackMeshTransform.localScale.x * fitThreshold)
         {
@@ -62,6 +70,13 @@ public class StackSliceController : IStackSliceController
         return CutCase.Cut;
     }
 
+    private void ResetStack()
+    {
+        StackRb.isKinematic = true;
+        StackRb.gameObject.SetActive(false);
+        StackTransform.localPosition = Vector3.zero;
+    }
+
     private void ResetPiece()
     {
         PieceRb.isKinematic = true;
@@ -69,11 +84,7 @@ public class StackSliceController : IStackSliceController
         PieceTransform.localPosition = Vector3.zero;
     }
 
-    public void Dispose()
-    {
-        _resetTween?.Kill();
-        ResetPiece();
-    }
+    public void Dispose() => _resetTween?.Kill();
 }
 
 public interface IStackSliceController

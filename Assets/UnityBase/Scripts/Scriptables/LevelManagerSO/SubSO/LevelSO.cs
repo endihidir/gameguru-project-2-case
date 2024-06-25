@@ -7,6 +7,8 @@ namespace UnityBase.Managers.SO
     {
         public int index;
 
+        public float playerMovementSpeed = 1f;
+        
         public StackConfigSO stackConfigSo;
     }
 }

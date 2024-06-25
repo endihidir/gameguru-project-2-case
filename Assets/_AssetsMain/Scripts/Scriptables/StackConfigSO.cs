@@ -11,8 +11,15 @@ public class StackConfigSO : ScriptableObject
 
     public Vector3 stackSize = new Vector3(3f, 0.5f, 3f);
     
-    public ColorSO[] stacks;
+    public StackData[] stacks;
     
     [Button]
     public void ResizeArray() => Array.Resize(ref stacks, stackCount);
+}
+
+[Serializable]
+public struct StackData
+{
+    public ColorSO colorSo;
+    public StartSide movementStartSide;
 }

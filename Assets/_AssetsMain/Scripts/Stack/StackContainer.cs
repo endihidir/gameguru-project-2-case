@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityBase.Extensions;
 using UnityBase.Service;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public class StackContainer : IStackContainer, IGameplayBootService
 {
@@ -12,12 +14,13 @@ public class StackContainer : IStackContainer, IGameplayBootService
 
     private IStackBehaviour[] _stackBehaviours;
     private StackConfigSO _stackConfigSo;
-    public IStackBehaviour[] StackBehaviours => _stackBehaviours;
+    private Tag_StacksParent _stacksParent;
     
     public StackContainer(IPoolManager poolManager, ILevelManager levelManager)
     {
         _poolManager = poolManager;
         _levelManager = levelManager;
+        _stacksParent = Object.FindObjectOfType<Tag_StacksParent>();
     }
     
     public void Initialize()
@@ -47,19 +50,17 @@ public class StackContainer : IStackContainer, IGameplayBootService
 
     public bool TryGetNextStack(out IStackBehaviour stackBehaviour)
     {
-        stackBehaviour = GetNextUnconstructedStack();
+        stackBehaviour = GetNextUnConstructedStack();
 
         if (stackBehaviour == null) return false;
 
-        var previousStackBehaviour = _stackBehaviours[stackBehaviour.Index - 1];
-        var position = CalculateNextStackPosition(stackBehaviour.Index, previousStackBehaviour.StackInitializer.GetPos().x);
+        var stackIndex = stackBehaviour.Index;
+        var previousStackBehaviour = _stackBehaviours[stackIndex - 1];
+        var position = CalculateNextStackPosition(stackIndex, previousStackBehaviour.StackInitializer.GetPos().x);
         var scale = previousStackBehaviour.StackInitializer.GetScale();
-        
         ConstructStack(stackBehaviour, position, scale);
+        SetPreviousStackSliceEntity(stackBehaviour, previousStackBehaviour);
         
-        var previousStackSliceEntity = _stackBehaviours[stackBehaviour.Index - 1].StackSliceController.StackSliceEntity;
-        stackBehaviour.StackSliceController.SetPreviousSliceEntity(previousStackSliceEntity);
-        stackBehaviour.StackAnimationController.SetMovementDuration(_stackConfigSo.movementDuration);
         return true;
     }
 
@@ -73,9 +74,12 @@ public class StackContainer : IStackContainer, IGameplayBootService
     private void ConfigureStack(IStackConstructor stackConstructor, IStackBehaviour stackBehaviour, Vector3 pos, Vector3 size)
     {
         stackConstructor.Construct(stackBehaviour);
+        var stackIndex = stackBehaviour.Index;
         stackBehaviour.StackInitializer.SetPos(pos);
         stackBehaviour.StackInitializer.SetScale(size);
-        stackBehaviour.StackInitializer.SetColor(_stackConfigSo.stacks[stackBehaviour.Index].color);
+        stackBehaviour.StackInitializer.SetColor(_stackConfigSo.stacks[stackIndex].colorSo.color);
+        stackBehaviour.StackAnimationController.SetMovementDuration(_stackConfigSo.movementDuration);
+        stackBehaviour.StackAnimationController.SetMovementStartSide(_stackConfigSo.stacks[stackIndex].movementStartSide);
     }
     private Vector3 CalculateNextStackPosition(int index, float xPos)
     {
@@ -86,16 +90,22 @@ public class StackContainer : IStackContainer, IGameplayBootService
     private IStackConstructor InitializeStackConstructor()
     {
         var stackController = _poolManager.GetObject<StackController>();
+        stackController.transform.SetParent(_stacksParent.transform);
         _stackControllers.Add(stackController);
         return stackController;
     }
+    
+    private void SetPreviousStackSliceEntity(IStackBehaviour stackBehaviour, IStackBehaviour previousStackBehaviour)
+    {
+        var previousStackSliceEntity = previousStackBehaviour.StackSliceController.StackSliceEntity;
+        stackBehaviour.StackSliceController.SetPreviousSliceEntity(previousStackSliceEntity);
+    }
 
     private void ShowStack(IStackConstructor stackConstructor) => stackConstructor.Show();
-    private IStackBehaviour GetNextUnconstructedStack() => _stackBehaviours.FirstOrDefault(x => !x.IsConstructed);
+    private IStackBehaviour GetNextUnConstructedStack() => _stackBehaviours.FirstOrDefault(x => !x.IsConstructed);
 }
 
 public interface IStackContainer
 {
-    public IStackBehaviour[] StackBehaviours { get; }
     public bool TryGetNextStack(out IStackBehaviour stackBehaviour);
 }

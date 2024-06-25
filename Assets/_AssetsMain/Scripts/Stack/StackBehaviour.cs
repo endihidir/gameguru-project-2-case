@@ -13,6 +13,7 @@ public class StackBehaviour : IStackBehaviour
         IsConstructed = false;
         StackInitializer?.Dispose();
         StackSliceController?.Dispose();
+        StackAnimationController?.Dispose();
     }
 }
 

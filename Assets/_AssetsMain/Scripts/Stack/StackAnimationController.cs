@@ -6,10 +6,12 @@ public class StackAnimationController : IStackAnimationController
 {
     private IStackAnimationEntity _stackAnimationEntity;
     private float StackWidth => _stackAnimationEntity.StackMeshTransform.localScale.x;
-
-    private Tween _moveTween;
-
+    
     private float _movementDuration;
+
+    private StartSide _movementStartSide;
+    
+    private Tween _moveTween;
 
     public StackAnimationController(IStackAnimationEntity stackAnimationEntity)
     {
@@ -17,12 +19,13 @@ public class StackAnimationController : IStackAnimationController
     }
 
     public void SetMovementDuration(float duration) => _movementDuration = duration;
+    public void SetMovementStartSide(StartSide startSide) => _movementStartSide = startSide;
 
-    public void StartMovement(StartSide startSide, Ease ease = Ease.InOutQuad, float offset = 0.5f)
+    public void StartMovement(Ease ease = Ease.InOutQuad, float offset = 0.5f)
     {
         var transform = _stackAnimationEntity.StackTransform;
         
-        var xDir = startSide == StartSide.Left ? -1 : 1;
+        var xDir = _movementStartSide == StartSide.Left ? -1 : 1;
 
         var startPos = transform.position.x;
         var startOffset = xDir * (StackWidth + offset);
@@ -35,18 +38,15 @@ public class StackAnimationController : IStackAnimationController
                               .SetLoops(-1, LoopType.Yoyo);
     }
 
-    public void StopMovement()
-    {
-        _moveTween?.Kill();
-    }
-
+    public void StopMovement() => _moveTween?.Kill();
     public void Dispose() => StopMovement();
 }
 
 public interface IStackAnimationController
 {
     public void SetMovementDuration(float duration);
-    public void StartMovement(StartSide startSide, Ease ease = Ease.InOutQuad, float offset = 0.5f);
+    public void SetMovementStartSide(StartSide startSide);
+    public void StartMovement(Ease ease = Ease.InOutQuad, float offset = 0.5f);
     public void StopMovement();
     public void Dispose();
 }
@@ -59,6 +59,7 @@ public interface IStackAnimationEntity
 
 public enum StartSide
 {
+    None,
     Left,
     Right
 }

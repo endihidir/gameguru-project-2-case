@@ -6,8 +6,6 @@ public class PlayerBehaviour : IPlayerBehaviour
     public IPlayerMovementController PlayerMovementController { get; set; }
     public void Initialize(Vector3 startPos)
     {
-        Debug.Log(PlayerMovementController);
-        
         PlayerMovementController.SetInitialPosition(startPos);
     }
 

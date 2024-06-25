@@ -58,7 +58,7 @@ namespace UnityBase.Manager
             
             var gameState = _tutorialProcessManager.IsSelectedLevelTutorialEnabled ? GameState.GameTutorialState : GameState.GamePlayState;
 
-            ChangeGameState(gameState, 1f);
+            ChangeGameState(gameState, 1f, 0.1f);
         }
 
         public async void ChangeGameState(GameState nextGameState, float transitionDuration = 0f, float startDelay = 0f)
