@@ -37,7 +37,8 @@ public class StackAnimationController : IStackAnimationController
                               .SetEase(ease)
                               .SetLoops(-1, LoopType.Yoyo);
     }
-
+    public void PlayMovement() => _moveTween?.Play();
+    public void PauseMovement() => _moveTween?.Pause();
     public void StopMovement() => _moveTween?.Kill();
     public void Reset() => StopMovement();
     public void Dispose() => StopMovement();
@@ -48,6 +49,8 @@ public interface IStackAnimationController
     public void SetMovementDuration(float duration);
     public void SetMovementStartSide(StartSide startSide);
     public void StartMovement(Ease ease = Ease.InOutQuad, float offset = 0.5f);
+    public void PauseMovement();
+    public void PlayMovement();
     public void StopMovement();
     public void Reset();
     public void Dispose();

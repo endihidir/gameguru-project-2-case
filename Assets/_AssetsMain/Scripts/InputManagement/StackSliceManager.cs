@@ -23,6 +23,10 @@ public class StackSliceManager : IStackSliceManager, IGameplayBootService, ITick
 
     public void Initialize()
     {
+        _stackContainer.TryGetNextStack(out _currentStackBehaviour);
+        _currentStackBehaviour.StackAnimationController.StartMovement();
+        _currentStackBehaviour.StackAnimationController.PauseMovement();
+        
         _gameStateEventBinding.Add(OnStartGameState);
         EventBus<GameStateData>.AddListener(_gameStateEventBinding, GameStateData.GetChannel(TransitionState.Start));
     }
@@ -36,11 +40,10 @@ public class StackSliceManager : IStackSliceManager, IGameplayBootService, ITick
     private void OnStartGameState(GameStateData gameStateData)
     {
         _isInputActivated = gameStateData is { StartState: GameState.GameLoadingState, EndState: GameState.GamePlayState };
-
+        
         if (_isInputActivated)
         {
-            _stackContainer.TryGetNextStack(out _currentStackBehaviour);
-            _currentStackBehaviour.StackAnimationController.StartMovement();
+            _currentStackBehaviour.StackAnimationController.PlayMovement();
         }
     }
 
