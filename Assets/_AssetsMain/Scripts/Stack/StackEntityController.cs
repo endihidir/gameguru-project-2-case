@@ -2,7 +2,7 @@ using System;
 using UnityBase.Pool;
 using UnityEngine;
 
-public class StackController : MonoBehaviour, IStackConstructor, IStackInitEntity, IStackSliceEntity, IStackAnimationEntity
+public class StackEntityController : MonoBehaviour, IStackConstructor, IStackInitEntity, IStackSliceEntity, IStackAnimationEntity
 {
     [SerializeField] private Transform _stackMeshT;
     [SerializeField] private Transform _stackPiece;

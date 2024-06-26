@@ -59,7 +59,7 @@ public interface IStackAnimationEntity
 
 public enum StartSide
 {
-    None,
+    Idle,
     Left,
     Right
 }

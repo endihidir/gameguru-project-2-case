@@ -1,22 +1,22 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityBase.EventBus;
 using UnityBase.Extensions;
 using UnityBase.Service;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-public class StackContainer : IStackContainer, IGameplayBootService
+public class StackManager : IStackContainer, IGameplayBootService
 {
     private readonly IPoolManager _poolManager;
     private readonly ILevelManager _levelManager;
-    private readonly List<StackController> _stackControllers = new();
+    private readonly List<StackEntityController> _stackControllers = new();
 
     private IStackBehaviour[] _stackBehaviours;
     private StackConfigSO _stackConfigSo;
     private Tag_StacksParent _stacksParent;
     
-    public StackContainer(IPoolManager poolManager, ILevelManager levelManager)
+    public StackManager(IPoolManager poolManager, ILevelManager levelManager)
     {
         _poolManager = poolManager;
         _levelManager = levelManager;
@@ -35,9 +35,23 @@ public class StackContainer : IStackContainer, IGameplayBootService
             _stackBehaviours[i] = new StackBehaviour(i);
         
         ConstructStack(_stackBehaviours[0], Vector3.zero, _stackConfigSo.stackSize);
+        InvokeStackSettleData(_stackBehaviours[0]);
 
         var lastStackZPos = (_stackConfigSo.stackCount - 1) * _stackConfigSo.stackSize.z;
         ConstructStack(_stackBehaviours[^1], Vector3.zero.With(z: lastStackZPos), _stackConfigSo.stackSize);
+        InvokeStackSettleData(_stackBehaviours[^1]);
+    }
+
+    private void InvokeStackSettleData(IStackBehaviour stackBehaviour)
+    {
+        var firstStackSettleData = new StackSettleData 
+        { 
+            stackIndex = stackBehaviour.Index, 
+            sliceCase = SliceCase.NotSliceable, 
+            settledPos = stackBehaviour.StackInitializer.GetPos() 
+        };
+
+        EventBus<StackSettleData>.Invoke(firstStackSettleData);
     }
 
     public void Dispose()
@@ -89,7 +103,7 @@ public class StackContainer : IStackContainer, IGameplayBootService
 
     private IStackConstructor InitializeStackConstructor()
     {
-        var stackController = _poolManager.GetObject<StackController>();
+        var stackController = _poolManager.GetObject<StackEntityController>();
         stackController.transform.SetParent(_stacksParent.transform);
         _stackControllers.Add(stackController);
         return stackController;

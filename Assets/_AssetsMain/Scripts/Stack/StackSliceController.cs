@@ -31,9 +31,9 @@ public class StackSliceController : IStackSliceController
         _previousStackSliceEntity = previousStackSliceEntity;
     }
 
-    public CutCase SliceObject(float fitThreshold = 0.1f)
+    public SliceCase SliceObject(float fitThreshold = 0.1f)
     {
-        if (_previousStackSliceEntity is null) return CutCase.None;
+        if (_previousStackSliceEntity is null) return SliceCase.None;
         
         var xDist = _previousStackSliceEntity.StackTransform.position.x - StackTransform.position.x;
 
@@ -41,13 +41,13 @@ public class StackSliceController : IStackSliceController
         {
             StackRb.isKinematic = false;
             _resetTween = DOVirtual.DelayedCall(3f, ResetStack);
-            return CutCase.OutOfBounds;
+            return SliceCase.OutOfBounds;
         }
 
         if (Mathf.Abs(xDist) <= _previousStackSliceEntity.StackMeshTransform.localScale.x * fitThreshold)
         {
             StackTransform.position = StackTransform.position.With(x: _previousStackSliceEntity.StackTransform.position.x);
-            return CutCase.PerfectFit;
+            return SliceCase.PerfectFit;
         }
 
         var side = xDist > 0 ? 1f : -1f;
@@ -67,7 +67,7 @@ public class StackSliceController : IStackSliceController
 
         _resetTween = DOVirtual.DelayedCall(3f, ResetPiece);
         
-        return CutCase.Cut;
+        return SliceCase.Cut;
     }
 
     private void ResetStack()
@@ -91,7 +91,7 @@ public interface IStackSliceController
 {
     public IStackSliceEntity StackSliceEntity { get; }
     public void SetPreviousSliceEntity(IStackSliceEntity previousStackSliceEntity);
-    public CutCase SliceObject(float fitThreshold = 0.1f);
+    public SliceCase SliceObject(float fitThreshold = 0.1f);
     public void Dispose();
 }
 
@@ -104,9 +104,10 @@ public interface IStackSliceEntity
     public Rigidbody PieceRigidBody { get; }
 }
 
-public enum CutCase
+public enum SliceCase
 {
     None,
+    NotSliceable,
     OutOfBounds,
     PerfectFit,
     Cut

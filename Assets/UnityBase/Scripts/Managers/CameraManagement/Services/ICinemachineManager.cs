@@ -12,6 +12,9 @@ namespace UnityBase.Service
         public void SetGameplayTargetParent(Transform parent);
         public void SetGameplayTargetPosition(Vector3 position);
         public void SetGameplayTargetLocalPosition(Vector3 position);
-        public void ResetGameplayTarget();
+        public void SetGameplayTargetRotation(Quaternion rotation);
+        public void SetGameplayTargetLocalRotation(Quaternion rotation);
+        public void RotateGameplayTarget(float speed, float deltaTime);
+        public void ResetGameplayTarget(bool resetInLocal);
     }
 }

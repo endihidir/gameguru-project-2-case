@@ -367,6 +367,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _modelTransform: {fileID: 8794278876091812659}
+  _animator: {fileID: 3236859838882468169}
 --- !u!1 &4494053081266356624
 GameObject:
   m_ObjectHideFlags: 0

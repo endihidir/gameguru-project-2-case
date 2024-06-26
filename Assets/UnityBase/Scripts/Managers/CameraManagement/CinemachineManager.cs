@@ -68,10 +68,19 @@ namespace UnityBase.Manager
         }
         public void SetGameplayTargetPosition(Vector3 position) => _gameplayCamTarget.position = position;
         public void SetGameplayTargetLocalPosition(Vector3 position) => _gameplayCamTarget.localPosition = position;
-        public void ResetGameplayTarget()
+        public void SetGameplayTargetRotation(Quaternion rotation) => _gameplayCamTarget.rotation = rotation;
+        public void SetGameplayTargetLocalRotation(Quaternion rotation) => _gameplayCamTarget.localRotation = rotation;
+        public void RotateGameplayTarget(float speed, float deltaTime) => _gameplayCamTarget.Rotate(Vector3.up * speed * deltaTime);
+
+        public void ResetGameplayTarget(bool resetInLocal)
         {
             _gameplayCamTarget.SetParent(_camTargetsDefaultParent);
-            _gameplayCamTarget.localPosition = Vector3.zero;
+            
+            if (resetInLocal)
+            {
+                _gameplayCamTarget.localPosition = Vector3.zero;
+                _gameplayCamTarget.localRotation = Quaternion.identity;
+            }
         }
     }
 

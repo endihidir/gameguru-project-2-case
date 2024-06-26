@@ -3,10 +3,12 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour, IPlayerConstructor, IAnimationEntity, IMovementEntity
 {
     [SerializeField] private Transform _modelTransform;
+    [SerializeField] private Animator _animator;
     
     private IPlayerBehaviour _playerBehaviour;
     public IPlayerBehaviour PlayerBehaviour => _playerBehaviour;
 
+    public Animator Animator => _animator;
     public Transform MovementTransform => transform;
     public Transform RotationTransform => _modelTransform;
 

@@ -14,8 +14,8 @@ namespace UnityBase.BaseLifetimeScope
             builder.Register<GameplayManager>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<CinemachineManager>(Lifetime.Singleton).AsImplementedInterfaces();
 
-            builder.Register<StackContainer>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<StackDropController>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<StackManager>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<StackSliceManager>(Lifetime.Singleton).AsImplementedInterfaces();
             
             builder.Register<PlayerStateMachine>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<PlayerInitializer>(Lifetime.Singleton).AsImplementedInterfaces();

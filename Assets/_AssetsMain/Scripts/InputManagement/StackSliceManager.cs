@@ -1,4 +1,3 @@
-using System;
 using UnityBase.EventBus;
 using UnityBase.Manager;
 using UnityBase.Manager.Data;
@@ -6,7 +5,7 @@ using UnityBase.Service;
 using UnityEngine;
 using VContainer.Unity;
 
-public class StackDropController : IStackDropController, IGameplayBootService, ITickable
+public class StackSliceManager : IStackSliceManager, IGameplayBootService, ITickable
 {
     private readonly IStackContainer _stackContainer;
     
@@ -15,9 +14,8 @@ public class StackDropController : IStackDropController, IGameplayBootService, I
     private bool _isInputActivated;
 
     private IStackBehaviour _currentStackBehaviour;
-    public event Action<Vector3> OnStackDropped;
     
-    public StackDropController(IStackContainer stackContainer)
+    public StackSliceManager(IStackContainer stackContainer)
     {
         _stackContainer = stackContainer;
         _gameStateEventBinding = new EventBinding<GameStateData>();
@@ -66,14 +64,22 @@ public class StackDropController : IStackDropController, IGameplayBootService, I
 
         switch (sliceCase)
         {
-            case CutCase.OutOfBounds:
+            case null:
                 _isInputActivated = false;
-               break;
-            case CutCase.Cut or CutCase.PerfectFit:
-                var droppedStackPosition = _currentStackBehaviour.StackInitializer.GetPos();
-                OnStackDropped?.Invoke(droppedStackPosition);
+                return;
+            case SliceCase.None or SliceCase.OutOfBounds:
+                _isInputActivated = false;
                 break;
         }
+
+        var settleData = new StackSettleData 
+        { 
+            stackIndex = _currentStackBehaviour.Index, 
+            sliceCase = sliceCase.Value, 
+            settledPos = _currentStackBehaviour.StackInitializer.GetPos() 
+        };
+        
+        EventBus<StackSettleData>.Invoke(settleData);
     }
 
     private void UpdateActiveStack()
@@ -91,7 +97,7 @@ public class StackDropController : IStackDropController, IGameplayBootService, I
     }
 }
 
-public interface IStackDropController
+public interface IStackSliceManager
 {
-    public event Action<Vector3> OnStackDropped;
+   
 }

@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Level 1
   m_EditorClassIdentifier: 
   index: 0
-  playerMovementSpeed: 0.5
+  playerMovementSpeed: 1
   stackConfigSo: {fileID: 11400000, guid: 092613fa6fc967c419032c449323c5f1, type: 2}

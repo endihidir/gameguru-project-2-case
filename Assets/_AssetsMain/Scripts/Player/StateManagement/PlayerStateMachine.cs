@@ -4,32 +4,31 @@ using UnityBase.Manager.Data;
 using UnityBase.Service;
 using UnityBase.StateMachineCore;
 using UnityEngine;
-using VContainer;
 using VContainer.Unity;
 using IState = UnityBase.StateMachineCore.IState;
 
 public class PlayerStateMachine : IStateMachine, ITickable, IGameplayBootService
 {
-    [Inject]
     private readonly IGameplayManager _gameplayManager;
     private readonly ICinemachineManager _cinemachineManager;
     
     private readonly IState _playerIdleState, _playerMoveState, _playerFailState, _playerSuccessState;
-    private readonly EventBinding<GameStateData> _gameStateBinding = new();
+    private readonly EventBinding<GameStateData> _gameStateBinding = new EventBinding<GameStateData>(Priority.Normal);
     
     private IState _currentPlayerState;
     public IState CurrentPlayerState => _currentPlayerState;
     
-    public PlayerStateMachine(IPlayerInitializer playerInitializer, ICinemachineManager cinemachineManager, ILevelManager levelManager, IStackDropController stackDropController)
+    public PlayerStateMachine(IGameplayManager gameplayManager, IPlayerInitializer playerInitializer, ICinemachineManager cinemachineManager, ILevelManager levelManager)
     {
         _cinemachineManager = cinemachineManager;
-        _cinemachineManager.ResetGameplayTarget();
-        var playerMovementSpeed = levelManager.GetCurrentLevelData().playerMovementSpeed;
+        _cinemachineManager.ResetGameplayTarget(true);
 
+        var currentLevelData = levelManager.GetCurrentLevelData();
+        
         _playerIdleState = new PlayerIdleState();
-        _playerMoveState = new PlayerMoveState(playerInitializer, _cinemachineManager, stackDropController, playerMovementSpeed);
-        _playerFailState = new PlayerFailState();
-        _playerSuccessState = new PlayerSuccessState();
+        _playerMoveState = new PlayerMoveState(playerInitializer, _cinemachineManager, currentLevelData);
+        _playerFailState = new PlayerFailState(gameplayManager);
+        _playerSuccessState = new PlayerSuccessState(gameplayManager, cinemachineManager);
 
         ChangePlayerState(_playerIdleState);
     }
@@ -39,7 +38,7 @@ public class PlayerStateMachine : IStateMachine, ITickable, IGameplayBootService
         _gameStateBinding.Add(OnGameplayStateChanged);
         EventBus<GameStateData>.AddListener(_gameStateBinding, GameStateData.GetChannel(TransitionState.Start));
         
-        CurrentPlayerState.OnStateComplete += OnCurrentPlayerStateComplete;
+        _playerMoveState.OnStateComplete += OnStateComplete;
     }
     
     public void Dispose()
@@ -63,7 +62,7 @@ public class PlayerStateMachine : IStateMachine, ITickable, IGameplayBootService
         }
     }
     
-    private void OnCurrentPlayerStateComplete()
+    private void OnStateComplete()
     {
         switch (CurrentPlayerState)
         {
@@ -73,12 +72,6 @@ public class PlayerStateMachine : IStateMachine, ITickable, IGameplayBootService
                 ChangePlayerState(nextPlayerState);
                 break;
             }
-            case PlayerFailState playerFailState:
-                _gameplayManager.ChangeGameState(GameState.GameFailState, 1f);
-                break;
-            case PlayerSuccessState playerSuccessState:
-                _gameplayManager.ChangeGameState(GameState.GameSuccessState, 1f);
-                break;
         }
     }
     
