@@ -12,7 +12,6 @@ public class StackBehaviour : IStackBehaviour
     {
         IsConstructed = false;
         StackInitializer?.Reset();
-        StackSliceController?.Reset();
         StackAnimationController?.Reset();
     }
 

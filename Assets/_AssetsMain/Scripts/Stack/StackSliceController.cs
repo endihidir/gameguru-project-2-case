@@ -11,7 +11,7 @@ public class StackSliceController : IStackSliceController
     private Tween _resetTween;
 
     private Transform StackTransform => _stackSliceEntity.StackTransform;
-    private Transform MeshTransform => _stackSliceEntity.StackMeshTransform;
+    private Transform StackMeshTransform => _stackSliceEntity.StackMeshTransform;
     private Transform PieceTransform => _stackSliceEntity.PieceTransform;
 
     private Rigidbody StackRb => _stackSliceEntity.StackRigidBody;
@@ -22,8 +22,6 @@ public class StackSliceController : IStackSliceController
     public StackSliceController(IStackSliceEntity stackSliceEntity)
     {
         _stackSliceEntity = stackSliceEntity;
-        
-        ResetPiece();
     }
 
     public void SetPreviousSliceEntity(IStackSliceEntity previousStackSliceEntity)
@@ -40,7 +38,7 @@ public class StackSliceController : IStackSliceController
         if (Mathf.Abs(xDist) >= _previousStackSliceEntity.StackMeshTransform.localScale.x)
         {
             StackRb.isKinematic = false;
-            _resetTween = DOVirtual.DelayedCall(3f, ResetStack);
+            _resetTween = DOVirtual.DelayedCall(3f, ()=> ResetStack(false));
             return SliceCase.OutOfBounds;
         }
 
@@ -56,11 +54,11 @@ public class StackSliceController : IStackSliceController
 
         var stackXPos = StackTransform.position.x + side * (cutSize * 0.5f);
         StackTransform.position = StackTransform.position.With(x: stackXPos);
-        MeshTransform.localScale = MeshTransform.localScale.With(x: remainingSize);
+        StackMeshTransform.localScale = StackMeshTransform.localScale.With(x: remainingSize);
         
         var pieceXPos = StackTransform.position.x - side * (remainingSize + cutSize) * 0.5f;
-        PieceTransform.position = StackTransform.position.With(x: pieceXPos, y: MeshTransform.position.y);
-        PieceTransform.localScale = MeshTransform.localScale.With(x: cutSize);
+        PieceTransform.position = StackTransform.position.With(x: pieceXPos, y: StackMeshTransform.position.y);
+        PieceTransform.localScale = StackMeshTransform.localScale.With(x: cutSize);
         
         PieceTransform.gameObject.SetActive(true);
         PieceRb.isKinematic = false;
@@ -70,23 +68,18 @@ public class StackSliceController : IStackSliceController
         return SliceCase.Cut;
     }
 
-
-    private void ResetStack()
+    public void ResetStack(bool enableStack)
     {
         StackRb.isKinematic = true;
-        StackRb.gameObject.SetActive(false);
-        StackTransform.localPosition = Vector3.zero;
+        StackRb.gameObject.SetActive(enableStack);
+        StackMeshTransform.localPosition = new Vector3(0f, -0.25f, 0f);
     }
 
-    private void ResetPiece()
+    public void ResetPiece()
     {
         PieceRb.isKinematic = true;
         PieceTransform.gameObject.SetActive(false);
         PieceTransform.localPosition = Vector3.zero;
-    }
-    public void Reset()
-    {
-        
     }
     
     public void Dispose() => _resetTween?.Kill();
@@ -97,7 +90,8 @@ public interface IStackSliceController
     public IStackSliceEntity StackSliceEntity { get; }
     public void SetPreviousSliceEntity(IStackSliceEntity previousStackSliceEntity);
     public SliceCase SliceObject(float fitThreshold = 0.1f);
-    public void Reset();
+    public void ResetStack(bool enableStack);
+    public void ResetPiece();
     public void Dispose();
 }
 

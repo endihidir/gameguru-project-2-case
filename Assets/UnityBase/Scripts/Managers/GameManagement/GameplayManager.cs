@@ -31,6 +31,8 @@ namespace UnityBase.Manager
 
         public void Initialize()
         {
+            _cinemachineManager.ChangeCamera(GameState.GamePlayState);
+            
             _sceneManager.OnSceneLoaded += OnSceneLoaded;
         }
 

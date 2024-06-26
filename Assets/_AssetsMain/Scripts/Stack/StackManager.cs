@@ -86,6 +86,8 @@ public class StackManager : IStackContainer, IGameplayBootService
         stackBehaviour.StackInitializer.SetColor(_stackConfigSo.stacks[stackIndex].colorSo.color);
         stackBehaviour.StackAnimationController.SetMovementDuration(_stackConfigSo.movementDuration);
         stackBehaviour.StackAnimationController.SetMovementStartSide(_stackConfigSo.stacks[stackIndex].movementStartSide);
+        stackBehaviour.StackSliceController.ResetStack(true);
+        stackBehaviour.StackSliceController.ResetPiece();
     }
     private Vector3 CalculateNextStackPosition(int index, float xPos)
     {
