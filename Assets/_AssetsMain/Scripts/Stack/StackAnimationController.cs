@@ -39,6 +39,7 @@ public class StackAnimationController : IStackAnimationController
     }
 
     public void StopMovement() => _moveTween?.Kill();
+    public void Reset() => StopMovement();
     public void Dispose() => StopMovement();
 }
 
@@ -48,6 +49,7 @@ public interface IStackAnimationController
     public void SetMovementStartSide(StartSide startSide);
     public void StartMovement(Ease ease = Ease.InOutQuad, float offset = 0.5f);
     public void StopMovement();
+    public void Reset();
     public void Dispose();
 }
 

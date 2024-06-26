@@ -5,23 +5,14 @@ namespace UnityBase.UI.ButtonCore
 {
     public class ButtonBehaviourFactory : IButtonBehaviourFactory
     {
-        private readonly IObjectResolver _container;
-
-        public ButtonBehaviourFactory(IObjectResolver container)
+        public TAct CreateButtonAction<TAct>(IButtonUI buttonUI, IObjectResolver resolver) where TAct : class, IButtonAction
         {
-            _container = container;
+            return ClassExtensions.CreateInstance<TAct>(resolver, buttonUI);
         }
 
-        public TAct CreateButtonAction<TAct>(IButtonUI buttonUI) where TAct : class, IButtonAction
+        public TAnim CreateButtonAnimation<TAnim>(IButtonUI buttonUI, IObjectResolver resolver) where TAnim : class, IButtonAnimation
         {
-          
-            
-            return ClassExtensions.CreateInstance<TAct>(_container, buttonUI);
-        }
-
-        public TAnim CreateButtonAnimation<TAnim>(IButtonUI buttonUI) where TAnim : class, IButtonAnimation
-        {
-            return ClassExtensions.CreateInstance<TAnim>(_container, buttonUI);
+            return ClassExtensions.CreateInstance<TAnim>(resolver, buttonUI);
         }
     }
 }

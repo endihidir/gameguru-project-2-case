@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using UnityBase.EventBus;
 using UnityBase.Extensions;
@@ -10,7 +9,6 @@ public class StackManager : IStackContainer, IGameplayBootService
 {
     private readonly IPoolManager _poolManager;
     private readonly ILevelManager _levelManager;
-    private readonly List<StackEntityController> _stackControllers = new();
 
     private IStackBehaviour[] _stackBehaviours;
     private StackConfigSO _stackConfigSo;
@@ -54,13 +52,7 @@ public class StackManager : IStackContainer, IGameplayBootService
         EventBus<StackSettleData>.Invoke(firstStackSettleData);
     }
 
-    public void Dispose()
-    {
-        foreach (var stackController in _stackControllers)
-        {
-            _poolManager.HideObject(stackController);
-        }
-    }
+    public void Dispose() => _poolManager?.HideAllObjectsOfType<StackEntityController>();
 
     public bool TryGetNextStack(out IStackBehaviour stackBehaviour)
     {
@@ -105,7 +97,6 @@ public class StackManager : IStackContainer, IGameplayBootService
     {
         var stackController = _poolManager.GetObject<StackEntityController>();
         stackController.transform.SetParent(_stacksParent.transform);
-        _stackControllers.Add(stackController);
         return stackController;
     }
     

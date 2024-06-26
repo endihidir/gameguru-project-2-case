@@ -19,17 +19,16 @@ public class CoinUI : DynamicUI
     private IMoveInOutView _moveInOutAnim;
     private ICoinModel _coinModel;
     
-    [Inject]
-    public void Construct(IViewBehaviourFactory viewBehaviourFactory)
+    public override void Construct(IViewBehaviourFactory viewBehaviourFactory, IObjectResolver resolver)
     {
-        _coinModel = viewBehaviourFactory.CreateViewModel<CoinModel>(this)
+        _coinModel = viewBehaviourFactory.CreateViewModel<CoinModel>(this, resolver)
                                          .Initialize(_coinTxt);
         
-        _moveInOutAnim = viewBehaviourFactory.CreateViewLocalAnimation<MoveInOutView>()
+        _moveInOutAnim = viewBehaviourFactory.CreateViewLocalAnimation<MoveInOutView>(resolver)
                                              .Initialize(_rectTransform)
                                              .Configure(_moveInOutViewConfigSo);
 
-        _bounceView = viewBehaviourFactory.CreateViewAnimation<BounceView>(this)
+        _bounceView = viewBehaviourFactory.CreateViewAnimation<BounceView>(this, resolver)
                                           .Initialize(_coinIconT)
                                           .Configure(_bounceViewConfigSo);
     }

@@ -19,6 +19,7 @@ public class PlayerSuccessState : IState
     public void OnEnter()
     {
         _gameplayManager.ChangeGameState(GameState.GameSuccessState, 1f);
+        _cinemachineManager.ResetGameplayTarget(false);
     }
 
     public void OnUpdate(float deltaTime)

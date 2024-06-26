@@ -20,6 +20,11 @@ public class StackInitializer : IStackInitializer
         _stackInitEntity.StackPieceMeshRenderer.SetPropertyBlock(_materialPropertyBlock);
     }
 
+    public void Reset()
+    {
+        
+    }
+
     public void Dispose()
     {
         
@@ -33,6 +38,7 @@ public interface IStackInitializer
     public Vector3 GetScale();
     public void SetScale(Vector3 scale);
     public void SetColor(Color color);
+    public void Reset();
     public void Dispose();
 }
 

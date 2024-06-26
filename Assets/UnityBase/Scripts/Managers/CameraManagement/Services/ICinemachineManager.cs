@@ -7,7 +7,7 @@ namespace UnityBase.Service
 {
     public interface ICinemachineManager
     {
-        public void ChangeCamera(GameState gameState);
+        public void ChangeCamera(GameState endGameState);
         public CinemachineVirtualCamera GetVirtualCam(CameraState cameraState);
         public void SetGameplayTargetParent(Transform parent);
         public void SetGameplayTargetPosition(Vector3 position);

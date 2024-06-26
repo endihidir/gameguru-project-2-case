@@ -43,6 +43,7 @@ public class StackEntityController : MonoBehaviour, IStackConstructor, IStackIni
     public void Hide(float duration, float delay, Action onComplete)
     {
         gameObject.SetActive(false);
+        _stackBehaviour?.Reset();
         onComplete?.Invoke();
     }
     

@@ -69,7 +69,7 @@ MonoBehaviour:
         m_PostInfinity: 0
         m_RotationOrder: 0
   - m_From: SuccessState
-    m_To: IntroState
+    m_To: GameplayState
     m_Blend:
       m_Style: 1
       m_Time: 0
@@ -80,7 +80,7 @@ MonoBehaviour:
         m_PostInfinity: 0
         m_RotationOrder: 0
   - m_From: FailState
-    m_To: IntroState
+    m_To: GameplayState
     m_Blend:
       m_Style: 1
       m_Time: 0

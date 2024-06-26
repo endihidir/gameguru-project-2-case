@@ -24,7 +24,7 @@ public class PlayerMovementController : IPlayerMovementController
     {
         var moveTr = _movementEntity.MovementTransform;
 
-        var targetYPos = moveTr.position.y - 5f;
+        var targetYPos = moveTr.position.y - 15f;
 
         _fallTween = moveTr.DOMoveY(targetYPos, 1f).SetEase(Ease.InOutQuad);
     }

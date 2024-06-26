@@ -129,7 +129,7 @@ namespace UnityBase.Manager
             return poolableObjectGroup.Pool.Count;
         }
 
-        public void UpdateAllResolvers(IObjectResolver objectResolver)
+        public void UpdateResolver(IObjectResolver objectResolver)
         {
             _objectResolver = objectResolver;
             

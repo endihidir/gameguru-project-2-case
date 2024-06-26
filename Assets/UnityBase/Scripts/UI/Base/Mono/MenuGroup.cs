@@ -19,7 +19,7 @@ namespace UnityBase.UI.Menu
         private Tween _canvasFadeTween;
         
         private CanvasGroup _canvasGroup;
-        private IDynamicView[] _dynamicViews;
+        private IDynamicUI[] _dynamicViews;
         
         private EventBinding<GameStateData> _gameStateStartBinding = new();
         private EventBinding<GameStateData> _gameStateCompleteBinding = new();
@@ -29,7 +29,7 @@ namespace UnityBase.UI.Menu
         protected void Awake()
         {
             _canvasGroup = GetComponent<CanvasGroup>();
-            _dynamicViews = GetComponentsInChildren<IDynamicView>(true);
+            _dynamicViews = GetComponentsInChildren<IDynamicUI>(true);
             CloseMenuGroupInstantly();
         }
 
@@ -58,24 +58,26 @@ namespace UnityBase.UI.Menu
         public void OpenMenuGroup()
         {
             _canvasGroup.blocksRaycasts = true;
-
+            
             _canvasFadeTween.Kill();
             _canvasFadeTween = _canvasGroup.DOFade(1f, _openDuration)
                 .SetEase(_ease)
-                .SetDelay(_openDelay)
-                .OnComplete(()=>_dynamicViews.ForEach(x => x.OpenView()));
+                .SetDelay(_openDelay);
+            
+            _dynamicViews.ForEach(x => x.OpenView());
         }
 
         [Button, ShowIf("IsInPlayMode")]
         public void CloseMenuGroup()
         {
             _canvasGroup.blocksRaycasts = false;
-
-            _canvasFadeTween.Kill();
+            
+            _canvasFadeTween?.Kill();
             _canvasFadeTween = _canvasGroup.DOFade(0f, _closeDuration)
-                .SetEase(_ease)
-                .SetDelay(_closeDelay)
-                .OnComplete(()=> _dynamicViews.ForEach(x => x.CloseView()));
+                                            .SetEase(_ease)
+                                            .SetDelay(_closeDelay);
+            
+            _dynamicViews.ForEach(x => x.CloseView());
         }
         private void OpenMenuGroupInstantly()
         {

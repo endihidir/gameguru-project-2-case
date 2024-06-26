@@ -18,10 +18,10 @@ namespace UnityBase.Presenter
             UpdateGameplayServices(objectResolver);
         }
 
-        private static void UpdateGameplayServices(IObjectResolver objectResolver)
+        private void UpdateGameplayServices(IObjectResolver objectResolver)
         {
             var poolManager = objectResolver.Resolve<IPoolManager>() as PoolManager;
-            poolManager?.UpdateAllResolvers(objectResolver);
+            poolManager?.UpdateResolver(objectResolver);
         }
         
         public void Initialize() => _gameplayBootServices.ForEach(x => x.Initialize());

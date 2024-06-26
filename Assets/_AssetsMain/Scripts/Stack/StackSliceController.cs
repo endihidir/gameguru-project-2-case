@@ -70,6 +70,7 @@ public class StackSliceController : IStackSliceController
         return SliceCase.Cut;
     }
 
+
     private void ResetStack()
     {
         StackRb.isKinematic = true;
@@ -83,7 +84,11 @@ public class StackSliceController : IStackSliceController
         PieceTransform.gameObject.SetActive(false);
         PieceTransform.localPosition = Vector3.zero;
     }
-
+    public void Reset()
+    {
+        
+    }
+    
     public void Dispose() => _resetTween?.Kill();
 }
 
@@ -92,6 +97,7 @@ public interface IStackSliceController
     public IStackSliceEntity StackSliceEntity { get; }
     public void SetPreviousSliceEntity(IStackSliceEntity previousStackSliceEntity);
     public SliceCase SliceObject(float fitThreshold = 0.1f);
+    public void Reset();
     public void Dispose();
 }
 

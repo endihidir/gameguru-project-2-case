@@ -35,9 +35,9 @@ namespace UnityBase.Manager
         public void Initialize() { }
         public void Dispose() { }
 
-        public void ChangeCamera(GameState gameState)
+        public void ChangeCamera(GameState endGameState)
         {
-            _currentCameraState = ConvertGameStateToCameraState(gameState);
+            _currentCameraState = ConvertGameStateToCameraState(endGameState);
 
             var stateName = _currentCameraState.ToString();
             
@@ -46,7 +46,6 @@ namespace UnityBase.Manager
 
         private CameraState ConvertGameStateToCameraState(GameState to) => to switch
         {
-            GameState.GameLoadingState => CameraState.IntroState,
             GameState.GameTutorialState => CameraState.TutorialState,
             GameState.GamePlayState => CameraState.GameplayState,
             GameState.GamePauseState => CameraState.GameplayState,

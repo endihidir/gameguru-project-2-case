@@ -11,7 +11,6 @@ public class PlayerMoveState : IState
     private const float INDEX_UPDATE_THRESHOLD = 0.3f;
     private const float LEVEL_FINISH_THRESHOLD = 0.65f;
     private const float FALL_DISTANCE_THRESHOLD = 0.65f;
-    
     public event Action OnStateComplete;
 
     private readonly IPlayerMovementController _playerMovementController;
@@ -108,7 +107,7 @@ public class PlayerMoveState : IState
     {
         StackSettleData nextSettleData = _stackSettleDatas.FirstOrDefault(x => x.stackIndex == _indexCounter);
 
-        if (nextSettleData.stackIndex == _indexCounter)
+        if (nextSettleData.stackIndex == _indexCounter && nextSettleData.sliceCase != SliceCase.OutOfBounds)
         {
             _isIndexUpdated = false;
             _currentStackSettleData = nextSettleData;

@@ -8,6 +8,14 @@ public class StackBehaviour : IStackBehaviour
     public IStackAnimationController StackAnimationController { get; set; }
     public StackBehaviour(int index) => Index = index;
 
+    public void Reset()
+    {
+        IsConstructed = false;
+        StackInitializer?.Reset();
+        StackSliceController?.Reset();
+        StackAnimationController?.Reset();
+    }
+
     public void Dispose()
     {
         IsConstructed = false;
@@ -24,5 +32,6 @@ public interface IStackBehaviour
     public IStackInitializer StackInitializer { get; set; }
     public IStackSliceController StackSliceController { get; set; }
     public IStackAnimationController StackAnimationController { get; set; }
+    public void Reset();
     public void Dispose();
 }

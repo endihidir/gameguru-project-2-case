@@ -9,10 +9,10 @@ namespace UnityBase.Managers.SO
     {
         [SerializeField] private List<SceneAssetSO> _sceneAssets;
         
-        public ILoadingMenuActivator LoadingMenuActivator;
+        public LoadingMenuController LoadingMenuActivator;
         public void Initialize()
         {
-            LoadingMenuActivator = FindObjectsOfType<MonoBehaviour>().OfType<ILoadingMenuActivator>().FirstOrDefault();
+            LoadingMenuActivator = FindObjectOfType<LoadingMenuController>();
         }
         
         public List<SceneData> GetSceneData(SceneType sceneType)

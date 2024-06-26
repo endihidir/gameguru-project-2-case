@@ -1,10 +1,12 @@
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using TMPro;
 using UnityBase.Service;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
 
-public class LoadingMenuController : MonoBehaviour, ILoadingMenuActivator
+public class LoadingMenuController : MonoBehaviour
 {
     [Inject] private readonly ISceneManager _sceneManager;
 
@@ -31,10 +33,14 @@ public class LoadingMenuController : MonoBehaviour, ILoadingMenuActivator
         _sliderTxt.text = "Loading... " + percentage.ToString("0.0") +"%";
     }
 
-    public void SetActive(bool value) => _loadingCanvasGroup.alpha = value ? 1 : 0;
-}
+    public async UniTask SetActive(bool value)
+    {
+        await _loadingCanvasGroup.DOFade(value ? 1f : 0f, 0.1f).SetEase(Ease.InOutQuad).AsyncWaitForCompletion();
+    }
 
-public interface ILoadingMenuActivator
-{
-    public void SetActive(bool value);
+    public void Reset()
+    {
+        _targetProgress = 0f;
+        _sliderImage.fillAmount = _targetProgress;
+    }
 }
