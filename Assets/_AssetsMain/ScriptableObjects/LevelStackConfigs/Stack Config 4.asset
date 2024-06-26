@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e921056e0ac43d49719046ee16c4b3d, type: 3}
+  m_Name: Stack Config 4
+  m_EditorClassIdentifier: 
+  movementDuration: 1.25
+  stackCount: 10
+  stackSize: {x: 3, y: 0.5, z: 3.5}
+  stacks:
+  - colorSo: {fileID: 11400000, guid: 3eddf7d06473e254c9d88be56d31540b, type: 2}
+    movementStartSide: 0
+  - colorSo: {fileID: 11400000, guid: 59339b96a9e4abb4e89c9a9a671df1af, type: 2}
+    movementStartSide: 1
+  - colorSo: {fileID: 11400000, guid: bf78a78bed1d3c1469a63ac140c4d7c8, type: 2}
+    movementStartSide: 2
+  - colorSo: {fileID: 11400000, guid: 625182f65493a594d8c23325dd49697b, type: 2}
+    movementStartSide: 2
+  - colorSo: {fileID: 11400000, guid: 5d43f2f624929224f827bbd8e4165288, type: 2}
+    movementStartSide: 1
+  - colorSo: {fileID: 11400000, guid: bf78a78bed1d3c1469a63ac140c4d7c8, type: 2}
+    movementStartSide: 1
+  - colorSo: {fileID: 11400000, guid: 336d27ddcd359a149b184f65892e62fd, type: 2}
+    movementStartSide: 2
+  - colorSo: {fileID: 11400000, guid: 625182f65493a594d8c23325dd49697b, type: 2}
+    movementStartSide: 1
+  - colorSo: {fileID: 11400000, guid: 5d43f2f624929224f827bbd8e4165288, type: 2}
+    movementStartSide: 1
+  - colorSo: {fileID: 11400000, guid: 08d51009cce899640b4f745a75906819, type: 2}
+    movementStartSide: 0

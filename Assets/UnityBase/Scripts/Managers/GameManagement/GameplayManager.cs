@@ -60,7 +60,7 @@ namespace UnityBase.Manager
             
             var gameState = _tutorialProcessManager.IsSelectedLevelTutorialEnabled ? GameState.GameTutorialState : GameState.GamePlayState;
 
-            ChangeGameState(gameState, 1f);
+            ChangeGameState(gameState);
         }
 
         public async void ChangeGameState(GameState nextGameState, float transitionDuration = 0f, float startDelay = 0f)
@@ -78,12 +78,12 @@ namespace UnityBase.Manager
                 await ChangeStateAsync(gameStateData, transitionDuration, startDelay);
                 
                 _currentGameState = nextGameState;
-                
+
                 _isTransitionStarted = false;
             }
             catch (OperationCanceledException e)
             {
-                Debug.Log(e);
+                //Debug.Log(e);
             }
         }
 
@@ -126,7 +126,7 @@ namespace UnityBase.Manager
             var isGameFailed = _currentGameState == GameState.GameFailState && nextGameplayState == GameState.GameSuccessState;
             var isGameSuccess = _currentGameState == GameState.GameSuccessState && nextGameplayState == GameState.GameFailState;
             var isTransitionNotCompleted = _isTransitionStarted;
-
+            
             return isStatesAreSame || isGameFailed || isTransitionNotCompleted || isGameSuccess;
         }
 

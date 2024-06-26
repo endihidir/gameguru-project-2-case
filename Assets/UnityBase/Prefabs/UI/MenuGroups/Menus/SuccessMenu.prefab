@@ -64,11 +64,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42b8fb688feb142d9a55965e27f8a2ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _openDuration: 0.25
-  _closeDuration: 0.5
-  _openDelay: 0.25
-  _closeDelay: 0
-  _ease: 7
+  _configSo: {fileID: 11400000, guid: 3c59927ae5e51c44d850fadc3fadbe39, type: 2}
 --- !u!1 &4102072730289068049
 GameObject:
   m_ObjectHideFlags: 0
@@ -219,8 +215,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _button: {fileID: 9081858392811787114}
-  _sceneType: 1
-  _useLoadingScene: 1
 --- !u!1 &4682425936941850472
 GameObject:
   m_ObjectHideFlags: 0

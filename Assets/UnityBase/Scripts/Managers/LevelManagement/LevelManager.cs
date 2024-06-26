@@ -4,6 +4,7 @@ using UnityBase.GameDataHolder;
 using UnityBase.Manager.Data;
 using UnityBase.Managers.SO;
 using UnityBase.Service;
+using UnityBase.UI.ViewCore;
 using UnityEngine;
 
 namespace UnityBase.Manager
@@ -18,6 +19,8 @@ namespace UnityBase.Manager
         private const string LAST_UNLOCKED_CHAPTER_KEY = "LastUnlockedChapterKey";
         private const string LAST_UNLOCKED_LEVEL_KEY = "LastUnlockedLevelKey";
         private const string LEVEL_TEXT_KEY = "LevelTextKey";
+
+        private readonly IViewBehaviourFactory _viewBehaviourFactory;
 
         #region VARIABLES
 
@@ -69,9 +72,10 @@ namespace UnityBase.Manager
 
         #endregion
 
-        public LevelManager(GameDataHolderSO gameDataHolderSo)
+        public LevelManager(GameDataHolderSO gameDataHolderSo, IViewBehaviourFactory viewBehaviourFactory)
         {
             var levelManagerData = gameDataHolderSo.levelManagerSo;
+            _viewBehaviourFactory = viewBehaviourFactory;
 
             _chapterData = levelManagerData.chapterData;
             _defaultUnlockedChapterIndex = levelManagerData.defaultUnlockedChapterIndex;
@@ -132,6 +136,14 @@ namespace UnityBase.Manager
 
         private void OnStartGameStateTransition(GameStateData gameStateData)
         {
+            if (gameStateData.EndState == GameState.GamePlayState)
+            {
+                if (_viewBehaviourFactory.TryGetModel<LevelUI, LevelModel>(out var levelModel))
+                {
+                    levelModel.UpdateLevelView(LevelText);
+                }
+            }
+            
             if (gameStateData.EndState == GameState.GameSuccessState)
             {
                 UpdateLevel();

@@ -18,7 +18,8 @@ public class PlayerSuccessState : IState
     
     public void OnEnter()
     {
-        _gameplayManager.ChangeGameState(GameState.GameSuccessState, 1f);
+        _gameplayManager.ChangeGameState(GameState.GameSuccessState);
+        
         _cinemachineManager.ResetGameplayTarget(false);
     }
 

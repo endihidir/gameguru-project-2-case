@@ -3,6 +3,7 @@ using Sirenix.OdinInspector;
 using Sirenix.Utilities;
 using UnityBase.EventBus;
 using UnityBase.Manager.Data;
+using UnityBase.UI.Config.SO;
 using UnityBase.UI.Dynamic;
 using UnityEngine;
 
@@ -11,10 +12,7 @@ namespace UnityBase.UI.Menu
     [RequireComponent(typeof(CanvasGroup))]
     public abstract class MenuGroup : MonoBehaviour
     {
-        [SerializeField] protected float _openDuration = 0.5f;
-        [SerializeField] protected float _closeDuration = 0.5f;
-        [SerializeField] protected float _openDelay, _closeDelay;
-        [SerializeField] protected Ease _ease = Ease.InOutQuad;
+        [SerializeField] private MenuGroupViewConfigSO _configSo;
         
         private Tween _canvasFadeTween;
         
@@ -60,9 +58,9 @@ namespace UnityBase.UI.Menu
             _canvasGroup.blocksRaycasts = true;
             
             _canvasFadeTween.Kill();
-            _canvasFadeTween = _canvasGroup.DOFade(1f, _openDuration)
-                .SetEase(_ease)
-                .SetDelay(_openDelay);
+            _canvasFadeTween = _canvasGroup.DOFade(1f, _configSo.openDuration)
+                .SetEase(_configSo.ease)
+                .SetDelay(_configSo.openDelay);
             
             _dynamicViews.ForEach(x => x.OpenView());
         }
@@ -73,9 +71,9 @@ namespace UnityBase.UI.Menu
             _canvasGroup.blocksRaycasts = false;
             
             _canvasFadeTween?.Kill();
-            _canvasFadeTween = _canvasGroup.DOFade(0f, _closeDuration)
-                                            .SetEase(_ease)
-                                            .SetDelay(_closeDelay);
+            _canvasFadeTween = _canvasGroup.DOFade(0f, _configSo.closeDuration)
+                                            .SetEase(_configSo.ease)
+                                            .SetDelay(_configSo.closeDelay);
             
             _dynamicViews.ForEach(x => x.CloseView());
         }

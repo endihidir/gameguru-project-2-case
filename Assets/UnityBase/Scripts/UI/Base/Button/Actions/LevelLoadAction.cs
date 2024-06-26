@@ -28,7 +28,7 @@ namespace UnityBase.UI.ButtonCore
         
         public override async void OnClick()
         {
-            _gameplayManager.ChangeGameState(GameState.GameLoadingState, 0f);
+            _gameplayManager.ChangeGameState(GameState.GameLoadingState);
             
             await UniTask.WaitForSeconds(0.1f);
             
