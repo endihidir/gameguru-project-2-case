@@ -27,6 +27,11 @@ public class StackManager : IStackContainer, IGameplayBootService
 
         if (!_stackConfigSo) return;
 
+        if (_levelManager.GetCurrentLevelData().index != 0)
+        {
+            SetupPreviousLevelStack();
+        }
+
         _stackBehaviours = new IStackBehaviour[_stackConfigSo.stackCount];
         
         for (int i = 0; i < _stackConfigSo.stackCount; i++) 
@@ -106,6 +111,25 @@ public class StackManager : IStackContainer, IGameplayBootService
     {
         var previousStackSliceEntity = previousStackBehaviour.StackSliceController.StackSliceEntity;
         stackBehaviour.StackSliceController.SetPreviousSliceEntity(previousStackSliceEntity);
+    }
+    
+    private void SetupPreviousLevelStack()
+    {
+        var stackBehaviour = new StackBehaviour(-1);
+        var stackController = _poolManager.GetObject<StackEntityController>();
+        stackController.transform.SetParent(_stacksParent.transform);
+        stackController.Construct(stackBehaviour);
+        var previousLevelLastStackColor = _levelManager.GetPreviousLevelData().stackConfigSo.stacks[^1].colorSo.color;
+        ResetStackBehaviour(stackBehaviour, previousLevelLastStackColor);
+    }
+
+    private void ResetStackBehaviour(StackBehaviour stackBehaviour, Color color)
+    {
+        stackBehaviour.StackSliceController.ResetStack(true);
+        stackBehaviour.StackSliceController.ResetPiece();
+        stackBehaviour.StackInitializer.SetColor(color);
+        stackBehaviour.StackInitializer.SetPos(Vector3.zero.With(z: -_stackConfigSo.stackSize.z));
+        stackBehaviour.StackInitializer.SetScale(_stackConfigSo.stackSize);
     }
 
     private void ShowStack(IStackConstructor stackConstructor) => stackConstructor.Show();

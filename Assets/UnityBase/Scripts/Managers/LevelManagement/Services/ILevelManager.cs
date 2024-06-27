@@ -12,6 +12,7 @@ namespace UnityBase.Service
         public ChapterSO GetLastUnlockedChapterData();
         public LevelSO GetSelectedLevelData();
         public LevelSO GetCurrentLevelData();
+        public LevelSO GetPreviousLevelData();
         public ChapterSO GetCurrentChapterData();
     }
 }

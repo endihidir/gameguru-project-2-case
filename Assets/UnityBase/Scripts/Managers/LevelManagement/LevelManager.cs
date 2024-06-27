@@ -178,6 +178,8 @@ namespace UnityBase.Manager
         public LevelSO GetSelectedLevelData() => GetCurrentChapterData()?.levelData?[LastSelectedLevelIndex];
 
         public LevelSO GetCurrentLevelData() => GetCurrentChapterData()?.levelData?[LastUnlockedLevelIndex];
+        public LevelSO GetPreviousLevelData() => GetCurrentChapterData()?.levelData?[LastUnlockedLevelIndex - 1];
+
         public ChapterSO GetCurrentChapterData() => _chapterData?[LastSelectedChapterIndex];
     }
 }
